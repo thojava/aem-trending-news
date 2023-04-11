@@ -46,22 +46,15 @@
             <plugin>
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>filevault-package-maven-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
                     <group>com.adobe.aem.guides</group>
                     <name>aem-guides-wknd.ui.content</name>
                     <packageType>content</packageType>
                     <accessControlHandling>merge</accessControlHandling>
-                    <validatorsSettings>
-                        <!-- disable nodetype validation as workaround until JCRVLT-463 got fixed -->
-                        <jackrabbit-nodetypes>
-                            <isDisabled>true</isDisabled>
-                        </jackrabbit-nodetypes>
-                        <jackrabbit-filter>
-                            <options>
-                                <validRoots>/conf,/content,/content/experience-fragments,/content/dam</validRoots>
-                            </options>
-                        </jackrabbit-filter>
-                    </validatorsSettings>
+                    <properties>
+                        <cloudManagerTarget>none</cloudManagerTarget>
+                    </properties>
                     <dependencies>
                         <dependency>
                             <groupId>com.adobe.aem.guides</groupId>

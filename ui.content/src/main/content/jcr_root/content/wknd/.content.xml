@@ -4,9 +4,9 @@
     <jcr:content
         cq:allowedTemplates="[/conf/wknd/settings/wcm/templates/(?!xf-).*]"
         cq:conf="/conf/wknd"
+        cq:deviceGroups="[/etc/mobile/groups/responsive]"
         jcr:primaryType="cq:PageContent"
         jcr:title="WKND Sites Project"
-        sling:configRef="/conf/wknd"
         sling:redirect="{Boolean}true"
         sling:redirectStatus="{Long}302"
         sling:resourceType="foundation/components/redirect"
