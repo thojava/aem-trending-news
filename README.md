@@ -25,11 +25,11 @@ If you have a running AEM instance you can build and package the whole project a
 
 Or to deploy it to a publish instance, run
 
-    mvn clean install -PautoInstallPackagePublish
+    mvn clean install -PautoInstallSinglePackagePublish
 
 Or alternatively
 
-    mvn clean install -PautoInstallPackage -Daem.port=4503
+    mvn clean install -PautoInstallSinglePackage -Daem.port=4503
 
 Or to deploy only the bundle to the author, run
 
