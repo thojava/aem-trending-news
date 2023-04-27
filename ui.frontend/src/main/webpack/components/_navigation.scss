@@ -1,6 +1,5 @@
 .cmp-navigation {
-    padding-top: 15px;
-    float: right;
+    padding-top: 18px;
 }
 
 .cmp-navigation__group {
@@ -11,12 +10,13 @@
 }
 
 .cmp-navigation__item {
+    padding-bottom: 18px;
     display: block;
     float: left;
 }
 
 .cmp-navigation__item-link {
-    color: $text-color;
+    color: $brand-third;
     font-size: $font-size-small;
     text-transform: uppercase;
     padding: 15px 17px;
@@ -24,7 +24,7 @@
 
     &:hover,
     &:focus {
-        background-color: $brand-primary;
+        //background-color: $brand-primary;
     }
 }
 
@@ -32,6 +32,6 @@
 .cmp-navigation__item--active {
 
     .cmp-navigation__item-link {
-        background-color: $brand-primary;
+        //background-color: $brand-primary;
     }
 }
