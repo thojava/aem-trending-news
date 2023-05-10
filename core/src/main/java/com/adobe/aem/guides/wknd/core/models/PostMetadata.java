@@ -1,9 +1,10 @@
 package com.adobe.aem.guides.wknd.core.models;
 
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Model;
+import java.util.Date;
 
-@Model(adaptables = Resource.class)
-public class PostMetadata {
-
+public interface PostMetadata {
+    String getName();
+    String getAvatar();
+    Date getPublishedDate();
+    boolean isEmpty();
 }
