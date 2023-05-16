@@ -1,4 +1,4 @@
-# Sample AEM project template
+# Google Trend News powered by AEM
 
 This is a website that fetching latest news from Google trends using the power of AEM framework. The whole process will be done automatically and with the help of ChatGPT to twist the content.
 
