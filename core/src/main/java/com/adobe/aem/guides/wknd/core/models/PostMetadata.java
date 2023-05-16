@@ -7,4 +7,5 @@ public interface PostMetadata {
     String getAvatar();
     Date getPublishedDate();
     boolean isEmpty();
+    int getTotalViews();
 }

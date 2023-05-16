@@ -33,7 +33,7 @@ Or alternatively
 
 Or to deploy only the bundle to the author, run
 
-    mvn clean install -PautoInstallBundle
+    mvn clean install -PautoInstallBundle -Padobe-public
 
 ## Testing
 

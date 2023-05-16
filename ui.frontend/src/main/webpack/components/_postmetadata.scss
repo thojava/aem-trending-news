@@ -25,4 +25,13 @@
         vertical-align: top;
         margin-left: 12px;
     }
+
+    .cpm-postmetadata__views {
+        float: right;
+
+        .cpm-postmetadata__views__icon {
+            font-size: inherit;
+            margin-right: 5px;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.adobe.aem.guides.wknd.core.models.impl;
 
 import com.adobe.aem.guides.wknd.core.models.PostMetadata;
+import com.adobe.aem.guides.wknd.core.services.PostMetadataService;
 import com.adobe.cq.dam.cfm.ContentFragment;
 import com.day.cq.wcm.api.Page;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.InjectionStrategy;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+import org.osgi.service.component.annotations.Reference;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -24,6 +26,8 @@ import java.util.Date;
         defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class PostMetadataImpl implements PostMetadata {
     protected static final String RESOURCE_TYPE = "wknd/components/postmetadata";
+    @Inject
+    private PostMetadataService postMetadataService;
     @Inject
     private Page currentPage;
     @SlingObject
@@ -57,7 +61,12 @@ public class PostMetadataImpl implements PostMetadata {
         assert currentPage != null;
         return ((Calendar) currentPage.getProperties().get("cq:lastReplicated")).getTime();
     }
+
     public boolean isEmpty() {
         return contentFragment == null;
+    }
+
+    public int getTotalViews() {
+        return postMetadataService.getTotalViews();
     }
 }
