@@ -1,0 +1,16 @@
+package com.adobe.aem.guides.wknd.core.schedulers.config;
+
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.AttributeType;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
+
+@ObjectClassDefinition(name="A scheduled task to fetch google trend news")
+public @interface GoogleTrendFetcherConfig {
+    @AttributeDefinition(name = "Cron-job expression")
+    String schedulerExpression() default "*/30 * * * * ?";
+    @AttributeDefinition(name = "Enabled", description = "True, if scheduler service is enabled", type = AttributeType.BOOLEAN)
+    public boolean enabled() default true;
+
+    @AttributeDefinition(name = "Google Trend Host", description = "This is where system fetch google trend data", type = AttributeType.STRING)
+    public String googleTrendHost();
+}
