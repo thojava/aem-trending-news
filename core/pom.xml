@@ -19,13 +19,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.adobe.aem.guides</groupId>
-        <artifactId>aem-guides-wknd</artifactId>
+        <artifactId>aem-trending-news</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>aem-guides-wknd.core</artifactId>
-    <name>WKND Sites Project - Core</name>
-    <description>Core bundle for WKND Sites Project</description>
+    <artifactId>aem-trending-news.core</artifactId>
+    <name>AEM Trending News Project - Core</name>
+    <description>Core bundle for AEM Trending News Project</description>
     <build>
         <plugins>
             <plugin>

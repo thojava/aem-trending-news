@@ -26,7 +26,7 @@ const CLIENTLIB_DIR = path.join(
   'content',
   'jcr_root',
   'apps',
-  'wknd',
+  'trendgpt',
   'clientlibs'
 );
 
@@ -45,7 +45,7 @@ module.exports = {
     {
       ...libsBaseConfig,
       name: 'clientlib-dependencies',
-      categories: ['wknd.dependencies'],
+      categories: ['trendgpt.dependencies'],
       assets: {
         // Copy entrypoint scripts and stylesheets into the respective ClientLib
         // directories
@@ -64,8 +64,8 @@ module.exports = {
     {
       ...libsBaseConfig,
       name: 'clientlib-site',
-      categories: ['wknd.site'],
-      dependencies: ['wknd.dependencies'],
+      categories: ['trendgpt.site'],
+      dependencies: ['trendgpt.dependencies'],
       assets: {
         // Copy entrypoint scripts and stylesheets into the respective ClientLib
         // directories

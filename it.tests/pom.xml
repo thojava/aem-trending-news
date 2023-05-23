@@ -22,7 +22,7 @@
     <!-- ====================================================================== -->
     <parent>
         <groupId>com.adobe.aem.guides</groupId>
-        <artifactId>aem-guides-wknd</artifactId>
+        <artifactId>aem-trending-news</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -30,9 +30,9 @@
     <!-- ====================================================================== -->
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
-    <artifactId>aem-guides-wknd.it.tests</artifactId>
-    <name>WKND Sites Project - Integration Tests Bundles</name>
-    <description>Bundles for Integration Tests for WKND Sites Project</description>
+    <artifactId>aem-trending-news.it.tests</artifactId>
+    <name>AEM Trending News Project - Integration Tests Bundles</name>
+    <description>Bundles for Integration Tests for AEM Trending News Project</description>
 
     <!-- <scm>
         <connection></connection>
@@ -58,7 +58,7 @@
                         </goals>
                         <configuration>
                             <bnd><![CDATA[
-Bundle-Category: WKND Sites Project
+Bundle-Category: AEM Trending News Project
 -exportcontents: ${packages;VERSIONED}
 -snapshot: ${tstamp;yyyyMMddHHmmssSSS}
 Bundle-DocURL:
@@ -139,7 +139,7 @@ Sling-Test-Regexp: .*Test
 
         <dependency>
             <groupId>com.adobe.aem.guides</groupId>
-            <artifactId>aem-guides-wknd.core</artifactId>
+            <artifactId>aem-trending-news.core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
