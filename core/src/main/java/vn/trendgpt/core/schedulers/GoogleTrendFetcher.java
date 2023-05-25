@@ -57,8 +57,8 @@ public class GoogleTrendFetcher implements Runnable {
     }
 
     /**
-     * It is used to check whether AEM is running in Publish mode or not.
-     * @return Returns true is AEM is in publish mode, false otherwise
+     * It is used to check whether AEM is running in author mode or not.
+     * @return Returns true is AEM is in author mode, false otherwise
      */
     private boolean isAuthor() {
         return this.slingSettings.getRunModes().contains("author");
