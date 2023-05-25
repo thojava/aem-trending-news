@@ -1,5 +1,6 @@
 package vn.trendgpt.core.models.impl;
 
+import org.apache.sling.api.resource.ValueMap;
 import vn.trendgpt.core.models.PostMetadata;
 import vn.trendgpt.core.services.PostMetadataService;
 import com.adobe.cq.dam.cfm.ContentFragment;
@@ -58,7 +59,8 @@ public class PostMetadataImpl implements PostMetadata {
 
     public Date getPublishedDate() {
         assert currentPage != null;
-        return ((Calendar) currentPage.getProperties().get("cq:lastReplicated")).getTime();
+        ValueMap properties = currentPage.getProperties();
+        return ((Calendar) properties.getOrDefault("cq:lastReplicated", properties.get("cq:lastModified"))).getTime();
     }
 
     public boolean isEmpty() {
