@@ -68,8 +68,8 @@
         text-transform: uppercase;
 
         &:before {
-            @include wkndiconstyle();
-            content: $wkndicon-download;
+            @include trendgpticonstyle();
+            content: $trendgpticon-download;
             padding-right: 0.5em;
             margin-top: -0.1em;
             font-size: 1.1rem;

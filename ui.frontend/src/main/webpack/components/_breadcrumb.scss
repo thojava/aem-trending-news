@@ -20,9 +20,9 @@
        text-transform: uppercase;
 
        &:before {
-         @include wkndiconstyle();
+         @include trendgpticonstyle();
          font-size: 1em;
-         content: $wkndicon-play3;
+         content: $trendgpticon-play3;
          color: $brand-primary;
          padding-right: 5px;
        }
