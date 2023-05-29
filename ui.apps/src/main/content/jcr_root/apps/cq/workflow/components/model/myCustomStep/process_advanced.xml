@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:Widget"
+    collapsed="{Boolean}true"
+    collapsible="{Boolean}true"
+    title="Advanced Settings"
+    xtype="dialogfieldset">
+    <items jcr:primaryType="cq:WidgetCollection">
+        <advance
+            jcr:primaryType="cq:Widget"
+            defaultValue="true"
+            fieldDescription="Check if your handler will advance to the next step."
+            fieldLabel="Handler Advance"
+            name="./metaData/PROCESS_AUTO_ADVANCE"
+            type="checkbox"
+            xtype="selection"/>
+    </items>
+</jcr:root>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Process"
+    sling:resourceType="cq/gui/components/authoring/dialog"
+    mode="edit">
+    <content
+        granite:class="wf_process_step_dialog"
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/tabs">
+        <items jcr:primaryType="nt:unstructured">
+            <common
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Common"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                <items jcr:primaryType="nt:unstructured">
+                    <columns
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <basic
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <title
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        fieldLabel="Title"
+                                        name="./jcr:title"/>
+                                    <description
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                        fieldLabel="Description"
+                                        name="./jcr:description"/>
+                                    <stage
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                        emptyOption="true"
+                                        fieldLabel="Workflow Stage"
+                                        name="./metaData/workflowStage">
+                                        <datasource
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="cq/workflow/components/datasource/stageDataSource"
+                                            addNone="{Boolean}true"/>
+                                    </stage>
+                                </items>
+                            </basic>
+                            <timeout
+                                granite:title="Timeout Settings"
+                                jcr:primaryType="nt:unstructured"
+                                jcr:title="Timeout Settings"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <timeout
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/autocomplete"
+                                        emptyOption="true"
+                                        fieldDescription="The external process timeout (in milliseconds)."
+                                        fieldLabel="Timeout"
+                                        name="./metaData/timeoutMillis">
+                                        <options
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/autocomplete/list"/>
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <off
+                                                jcr:primaryType="nt:unstructured"
+                                                text="Off"
+                                                value=" "/>
+                                            <immediate
+                                                jcr:primaryType="nt:unstructured"
+                                                text="Immediate"
+                                                value="{Long}1"/>
+                                            <_x0031_h
+                                                jcr:primaryType="nt:unstructured"
+                                                text="1h"
+                                                value="{Long}3600000"/>
+                                            <_x0036_h
+                                                jcr:primaryType="nt:unstructured"
+                                                text="6h"
+                                                value="{Long}21600000"/>
+                                            <_x0031_2h
+                                                jcr:primaryType="nt:unstructured"
+                                                text="12h"
+                                                value="{Long}43200000"/>
+                                            <_x0032_4h
+                                                jcr:primaryType="nt:unstructured"
+                                                text="24h"
+                                                value="{Long}86400000"/>
+                                        </items>
+                                    </timeout>
+                                    <timeoutHandler
+                                        granite:id="timeoutSelect"
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                        emptyOption="true"
+                                        fieldLabel="Timeout Handler"
+                                        name="./metaData/timeoutHandler"
+                                        ordered="true">
+                                        <datasource
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="cq/workflow/components/datasource/jsonProcessContent"
+                                            addNone="{Boolean}true"
+                                            src="/libs/cq/workflow/content/console/process.list.json"/>
+                                    </timeoutHandler>
+                                </items>
+                            </timeout>
+                        </items>
+                    </columns>
+                </items>
+            </common>
+            <process
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Process"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                <items jcr:primaryType="nt:unstructured">
+                    <columns
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <process
+                                granite:id="processSelect"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                emptyOption="true"
+                                fieldDescription="Select process implementation."
+                                fieldLabel="Process"
+                                name="./metaData/PROCESS"
+                                ordered="true">
+                                <datasource
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="cq/workflow/components/datasource/jsonProcessContent"
+                                    addNone="{Boolean}true"
+                                    src="/libs/cq/workflow/content/console/process.list.json"/>
+                            </process>
+                            <advance
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                fieldDescription="Check if your handler will advance to the next step."
+                                name="./metaData/PROCESS_AUTO_ADVANCE"
+                                text="Handler Advance"
+                                value="true"/>
+                            <advance-delete
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                name="./metaData/PROCESS_AUTO_ADVANCE@Delete"
+                                value="{Boolean}true"/>
+                            <arguments
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                fieldLabel="Arguments"
+                                name="./metaData/PROCESS_ARGS"/>
+                        </items>
+                    </columns>
+                </items>
+            </process>
+        </items>
+    </content>
+</jcr:root>
