@@ -11,7 +11,7 @@
         jcr:mixinTypes="[mix:versionable]"
         jcr:primaryType="cq:PageContent"
         jcr:title="Footer"
-        jcr:uuid="dd84268c-3e5e-4e73-abeb-bf8fdf554f78"
+        jcr:uuid="648d6aff-8b1a-4cf5-bc56-716485fd3fd1"
         sling:resourceType="cq/experience-fragments/components/experiencefragment"/>
     <master/>
 </jcr:root>
