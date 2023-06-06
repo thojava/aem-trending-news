@@ -6,6 +6,7 @@ import com.day.cq.replication.Replicator;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.WCMException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -20,12 +21,16 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vn.trendgpt.core.pojo.TrendArticle;
 import vn.trendgpt.core.schedulers.config.GoogleTrendFetcherConfig;
+import vn.trendgpt.core.schedulers.parsers.GoogleTrendParser;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component(service = Runnable.class, immediate = true)
@@ -33,7 +38,6 @@ import java.util.Map;
 public class GoogleTrendFetcher implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final String PAGE_TEMPLATE_PATH = "/conf/trendgpt/settings/wcm/templates/article-page";
-    private static final String ROOT_CONTENT_FOLDER = "/content/trendgpt/magazine";
     @Reference
     private SlingSettingsService slingSettings;
     @Reference
@@ -44,51 +48,74 @@ public class GoogleTrendFetcher implements Runnable {
     private Scheduler scheduler;
     private String googleTrendHost;
     private String schedulerJobName;
+    private String rootContentPath;
 
     @Override
     public void run() {
         logger.debug("GoogleTrendFetcher is now running, googleTrendHost='{}'", googleTrendHost);
-        final Map<String, Object > param = new HashMap<>();
+        final Map<String, Object> param = new HashMap<>();
         param.put(ResourceResolverFactory.SUBSERVICE, "getResourceResolver");
         try (ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(param)) {
-            createPage(resourceResolver, "Test Page");
+            List<TrendArticle> articles = parseContent();
+            for (TrendArticle article : articles) {
+                createPage(resourceResolver, article);
+            }
         } catch (LoginException e) {
             logger.error("Error when obtaining ResourceResolver", e);
             throw new RuntimeException(e);
         }
     }
 
-    private void createPage(ResourceResolver resourceResolver, String pageTitle) {
+    public List<TrendArticle> parseContent() {
+        try {
+            return GoogleTrendParser.parseStories(googleTrendHost);
+        } catch (IOException e) {
+            logger.error("Error when parsing content", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createPage(ResourceResolver resourceResolver, TrendArticle trendArticle) {
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
         if (pageManager != null) {
             Page createdPage;
             try {
-                createdPage = pageManager.create(ROOT_CONTENT_FOLDER, "", PAGE_TEMPLATE_PATH, pageTitle);
+                String normalizeTitle = normalizeTitle(trendArticle.getTitle());
+                logger.debug("Normalized title {} {}", trendArticle.getTitle(), normalizeTitle);
+                createdPage = pageManager.create(rootContentPath, "", PAGE_TEMPLATE_PATH, normalizeTitle);
             } catch (WCMException e) {
-                logger.error(String.format("Error when creating new page %s", pageTitle), e);
+                logger.error(String.format("Error when creating new page %s", trendArticle.getTitle()), e);
                 throw new RuntimeException(e);
             }
             try {
-                updatePage(createdPage, resourceResolver);
+                updatePage(createdPage, trendArticle, resourceResolver);
             } catch (RepositoryException | PersistenceException e) {
-                logger.error(String.format("Error when updating content to page %s", pageTitle), e);
+                logger.error(String.format("Error when updating content to page %s", trendArticle.getTitle()), e);
                 throw new RuntimeException(e);
             }
             try {
                 replicator.replicate(resourceResolver.adaptTo(Session.class), ReplicationActionType.ACTIVATE, createdPage.getPath());
             } catch (ReplicationException e) {
-                logger.error(String.format("Error when publishing page %s", pageTitle), e);
+                logger.error(String.format("Error when publishing page %s", trendArticle.getTitle()), e);
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private void updatePage(Page page, ResourceResolver resourceResolver) throws RepositoryException, PersistenceException {
+    private static String normalizeTitle(String title) {
+        return StringUtils.stripAccents(title).replaceAll("đ", "");
+    }
+
+    private void updatePage(Page page, TrendArticle trendArticle, ResourceResolver resourceResolver) throws RepositoryException, PersistenceException {
         Node contentNode = page.getContentResource().adaptTo(Node.class);
         assert contentNode != null;
+        Node titleNode = contentNode.getNode("root/container/container/title");
+        titleNode.setProperty("jcr:title", trendArticle.getTitle());
+
         Node bodyTextNode = contentNode.getNode("root/container/container/text");
-        bodyTextNode.setProperty("text", "<bold>Sample Body Content</bold>");
+        bodyTextNode.setProperty("text", trendArticle.getBody());
         bodyTextNode.setProperty("textIsRich", "true");
+
         resourceResolver.commit();
     }
 
@@ -96,15 +123,18 @@ public class GoogleTrendFetcher implements Runnable {
     @Modified
     protected void active(GoogleTrendFetcherConfig config) {
         logger.debug("GoogleTrendFetcher is activated");
-        if(isAuthor()) {
-            this.schedulerJobName = this.getClass().getSimpleName();
-            googleTrendHost = config.googleTrendHost();
+
+        this.schedulerJobName = this.getClass().getSimpleName();
+        this.googleTrendHost = config.googleTrendHost();
+        this.rootContentPath = config.rootContentPath();
+
+        if (isAuthor()) {
             this.addScheduler(config);
         }
     }
 
     private void addScheduler(GoogleTrendFetcherConfig config) {
-        if(config.enabled()) {
+        if (config.enabled()) {
             ScheduleOptions scheduleOptions = scheduler.EXPR(config.schedulerExpression());
             scheduleOptions.name(schedulerJobName);
 
@@ -122,6 +152,7 @@ public class GoogleTrendFetcher implements Runnable {
 
     /**
      * It is used to check whether AEM is running in author mode or not.
+     *
      * @return Returns true is AEM is in author mode, false otherwise
      */
     private boolean isAuthor() {
