@@ -1,5 +1,6 @@
 package vn.trendgpt.core.schedulers;
 
+import com.day.cq.commons.jcr.JcrUtil;
 import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.Replicator;
@@ -77,12 +78,14 @@ public class GoogleTrendFetcher implements Runnable {
 
     private void createPage(ResourceResolver resourceResolver, TrendArticle trendArticle) {
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
-        if (pageManager != null) {
+        assert pageManager != null;
+        String normalizeTitle = normalizeTitle(trendArticle.getTitle());
+        String pageName = createPageName(normalizeTitle);
+        boolean pageNotImported = pageManager.getPage(rootContentPath + "/" + pageName) == null;
+        if (pageNotImported) {
             Page createdPage;
             try {
-                String normalizeTitle = normalizeTitle(trendArticle.getTitle());
-                logger.debug("Normalized title {} {}", trendArticle.getTitle(), normalizeTitle);
-                createdPage = pageManager.create(rootContentPath, "", PAGE_TEMPLATE_PATH, normalizeTitle);
+                createdPage = pageManager.create(rootContentPath, pageName, PAGE_TEMPLATE_PATH, normalizeTitle);
             } catch (WCMException e) {
                 logger.error(String.format("Error when creating new page %s", trendArticle.getTitle()), e);
                 throw new RuntimeException(e);
@@ -102,13 +105,19 @@ public class GoogleTrendFetcher implements Runnable {
         }
     }
 
+    private static String createPageName(String normalizeTitle) {
+        return JcrUtil.createValidName(normalizeTitle, JcrUtil.HYPHEN_LABEL_CHAR_MAPPING).replaceAll("--|---", "-");
+    }
+
     private static String normalizeTitle(String title) {
-        return StringUtils.stripAccents(title).replaceAll("đ", "");
+        return StringUtils.stripAccents(title).replaceAll("đ", "d").replaceAll("Đ", "D");
     }
 
     private void updatePage(Page page, TrendArticle trendArticle, ResourceResolver resourceResolver) throws RepositoryException, PersistenceException {
         Node contentNode = page.getContentResource().adaptTo(Node.class);
         assert contentNode != null;
+        contentNode.setProperty("jcr:title", trendArticle.getTitle());
+
         Node titleNode = contentNode.getNode("root/container/container/title");
         titleNode.setProperty("jcr:title", trendArticle.getTitle());
 

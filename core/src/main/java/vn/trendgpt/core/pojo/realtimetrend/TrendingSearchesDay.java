@@ -6,7 +6,6 @@ import lombok.Setter;
 import java.util.List;
 @Getter
 @Setter
-public class TrendingStory {
-    private Image image;
-    private List<Article> articles;
+public class TrendingSearchesDay {
+    private List<TrendingSearch> trendingSearches;
 }

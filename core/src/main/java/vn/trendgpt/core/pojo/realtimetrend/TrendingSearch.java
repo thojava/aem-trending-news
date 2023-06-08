@@ -7,6 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class StorySummaries {
-    private List<TrendingStory> trendingStories;
+public class TrendingSearch {
+    private String formattedTraffic;
+    private List<Article> articles;
 }

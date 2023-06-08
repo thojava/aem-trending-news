@@ -6,7 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Article {
-    private String articleTitle;
+    private String title;
     private String url;
     private String snippet;
+    private Image image;
 }

@@ -11,41 +11,52 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vn.trendgpt.core.pojo.TrendArticle;
 import vn.trendgpt.core.pojo.realtimetrend.Article;
-import vn.trendgpt.core.pojo.realtimetrend.RealtimeTrends;
-import vn.trendgpt.core.pojo.realtimetrend.TrendingStory;
+import vn.trendgpt.core.pojo.realtimetrend.DailyTrends;
+import vn.trendgpt.core.pojo.realtimetrend.TrendingSearch;
+import vn.trendgpt.core.pojo.realtimetrend.TrendingSearchesDay;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class GoogleTrendParser {
     private static final Logger logger = LoggerFactory.getLogger(GoogleTrendParser.class);
+
     public static List<TrendArticle> parseStories(String contentURL) throws IOException {
         String jsonContent = IOUtils.toString(new URL(contentURL), Charset.defaultCharset());
-        RealtimeTrends realtimeTrend = new Gson().fromJson(jsonContent, RealtimeTrends.class);
+        jsonContent = jsonContent.replaceFirst("\\)]}',\n", "");
+        DailyTrends dailyTrends = new Gson().fromJson(jsonContent, DailyTrends.class);
 
-        List<TrendingStory> trendingStories = realtimeTrend.getStorySummaries().getTrendingStories().subList(0, 3);
         List<TrendArticle> articles = new ArrayList<>();
-        for (TrendingStory trendingStory : trendingStories) {
+        for (TrendingSearchesDay trendingSearchesDay : dailyTrends.getDefault_().getTrendingSearchesDays()) {
             TrendArticle.TrendArticleBuilder articleBuilder = TrendArticle.builder();
 
-            articleBuilder.image(trendingStory.getImage().getImgUrl());
-            Article firstArticle = trendingStory.getArticles().get(0);
-            logger.debug("Parsing article {}", firstArticle.getUrl());
-            articleBuilder.title(firstArticle.getArticleTitle());
-            try {
-                articleBuilder.body(parseArticleContent(firstArticle.getUrl()));
-            } catch (BoilerpipeProcessingException e) {
-                logger.error(String.format("Error when parsing content from URL %s", firstArticle.getUrl()), e);
-                continue;
+            List<TrendingSearch> trendingSearches = trendingSearchesDay.getTrendingSearches();
+            for (TrendingSearch trendingSearch : trendingSearches) {
+                if (isHotTrend(trendingSearch)) {
+                    Article firstArticle = trendingSearch.getArticles().get(0);
+                    logger.debug("Parsing article {}", firstArticle.getUrl());
+                    articleBuilder.title(firstArticle.getTitle());
+                    articleBuilder.image(firstArticle.getImage().getImageUrl());
+                    try {
+                        articleBuilder.body(parseArticleContent(firstArticle.getUrl()));
+                    } catch (BoilerpipeProcessingException e) {
+                        logger.error(String.format("Error when parsing content from URL %s", firstArticle.getUrl()), e);
+                        continue;
+                    }
+                    articles.add(articleBuilder.build());
+                }
             }
-            articles.add(articleBuilder.build());
         }
 
         return articles;
+    }
+
+    private static boolean isHotTrend(TrendingSearch trendingSearch) {
+        return Integer.parseInt(trendingSearch.getFormattedTraffic().replaceAll(Pattern.quote("K+"), "")) >= 10;
     }
 
     private static String parseArticleContent(String articleURL) throws IOException, BoilerpipeProcessingException {

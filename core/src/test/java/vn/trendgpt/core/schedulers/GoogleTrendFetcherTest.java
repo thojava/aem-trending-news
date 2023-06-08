@@ -3,7 +3,6 @@ package vn.trendgpt.core.schedulers;
 import com.day.cq.replication.Replicator;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.settings.SlingSettingsService;
 import org.apache.sling.testing.mock.sling.services.MockSlingSettingService;
@@ -14,13 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import vn.trendgpt.core.pojo.TrendArticle;
 
-import java.text.Normalizer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith({AemContextExtension.class, MockitoExtension.class})
 public class GoogleTrendFetcherTest {
@@ -44,7 +42,7 @@ public class GoogleTrendFetcherTest {
         slingSettingService.setRunModes(Collections.singleton("author"));
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put("googleTrendHost", "https://trends.google.com/trends/api/realtimetrends?hl=en-US&tz=-420&cat=h&fi=0&fs=0&geo=VN&ri=300&rs=20&sort=0");
+        properties.put("googleTrendHost", "https://trends.google.com/trends/api/dailytrends?hl=en-US&tz=-420&geo=VN&hl=en-US&ns=15");
         properties.put("rootContentPath", "/content");
         properties.put("enabled", false);
         serviceInstance = ctx.registerInjectActivateService(new GoogleTrendFetcher(), properties);
@@ -52,7 +50,7 @@ public class GoogleTrendFetcherTest {
     @Test
     void run() {
         List<TrendArticle> articles = serviceInstance.parseContent();
-        assertEquals(3, articles.size());
+        assertFalse(articles.isEmpty());
     }
 }
 

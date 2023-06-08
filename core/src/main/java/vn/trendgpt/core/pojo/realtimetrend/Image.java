@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Image {
-    private String imgUrl;
+    private String imageUrl;
 }
