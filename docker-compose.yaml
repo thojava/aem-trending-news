@@ -1,0 +1,294 @@
+version: "3.9"
+
+services:
+
+  ##########################################################
+  # AUTHOR START
+  ##########################################################
+  author:
+    image: ${AUTHOR_IMAGE}
+    hostname: author
+    restart: unless-stopped
+    healthcheck:
+      test: curl -u admin:admin --header Referer:localhost --silent --connect-timeout 5 --max-time 5 http://localhost:8080/system/console/bundles.json | grep -q \"state\":\"Installed\" && exit 1 || exit 0
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 1s
+    ports:
+      - ${AUTHOR_PORT}:8080
+      - ${AUTHOR_DEBUG_PORT}:58242
+    environment:
+      - TZ
+      - AEM_RUNMODE=-Dsling.run.modes=author,crx3,crx3tar,dev,dynamicmedia_scene7,nosamplecontent
+      - AEM_JVM_OPTS=-server -Xms248m -Xmx4524m -XX:MaxDirectMemorySize=256M -XX:+CMSClassUnloadingEnabled -Djava.awt.headless=true -Dorg.apache.felix.http.host=0.0.0.0 -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:58242
+    volumes:
+      - author-data:/aem/crx-quickstart/repository
+    depends_on:
+      - traefik
+    labels:
+      traefik.frontend.priority: 1
+      traefik.enable: true
+      traefik.http.routers.author.rule: "Host(`${AUTHOR_HOST}`)"
+      traefik.http.routers.author.entrypoints: web
+      traefik.http.routers.author_https.rule: "Host(`${AUTHOR_HOST}`)"
+      traefik.http.routers.author_https.tls: true
+      traefik.http.routers.author_https.entrypoints: websecure
+      traefik.http.services.author.loadbalancer.server.port: 8080
+      traefik.http.services.author.loadbalancer.passHostHeader: true
+    networks:
+      - author-network
+      - publish-network
+      - dispatcher-network
+      - internal
+      - default
+  ##########################################################
+  # AUTHOR END
+  ##########################################################
+
+
+  ##########################################################
+  # PUBLISH START
+  ##########################################################
+  publish:
+    image: ${PUBLISH_IMAGE}
+    hostname: publish
+    restart: unless-stopped
+    healthcheck:
+      test: curl -u admin:admin --header Referer:localhost --silent --connect-timeout 5 --max-time 5 http://localhost:8080/system/console/bundles.json | grep -q \"state\":\"Installed\" && exit 1 || exit 0
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+    ports:
+      - ${PUBLISH_PORT}:8080
+      - ${PUBLISH_DEBUG_PORT}:58242
+    environment:
+      - TZ
+      - DOMAIN_ENV_TRENDGPT=trendgpt.${DISPATCHER_HOST}
+      - AEM_RUNMODE=-Dsling.run.modes=publish,crx3,crx3tar,dev,dynamicmedia_scene7,nosamplecontent
+      - AEM_JVM_OPTS=-server -Xms248m -Xmx1524m -XX:MaxDirectMemorySize=256M -XX:+CMSClassUnloadingEnabled -Djava.awt.headless=true -Dorg.apache.felix.http.host=0.0.0.0 -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:58242
+    labels:
+      traefik.frontend.priority: 2
+      traefik.enable: true
+      traefik.http.routers.publish.rule: "Host(`${PUBLISH_HOST}`)"
+      traefik.http.routers.publish.entrypoints: web
+      traefik.http.routers.publish_https.rule: "Host(`${PUBLISH_HOST}`)"
+      traefik.http.routers.publish_https.tls: true
+      traefik.http.routers.publish_https.entrypoints: websecure
+      traefik.http.services.publish.loadbalancer.server.port: 8080
+      traefik.http.services.publish.loadbalancer.passHostHeader: true
+    volumes:
+      - publish-data:/aem/crx-quickstart/repository
+    networks:
+      - publish-network
+      - internal
+      - default
+  ##########################################################
+  # PUBLISH END
+  ##########################################################
+
+  ##########################################################
+  # DISPATCHER START
+  ##########################################################
+  dispatcher:
+    image: ${DISPATCHER_IMAGE}
+    hostname: dispatcher
+    restart: unless-stopped
+    ports:
+      - ${DISPATCHER_PORT}:80
+    environment:
+      - TZ
+      - AEM_PORT=8080
+      - AEM_HOST=publish
+      - DISP_LOG_LEVEL=trace1 #debug
+      - ENVIRONMENT_TYPE=LOCAL
+      - AEM_PROXY_HOST=proxy
+    labels:
+      traefik.frontend.priority: 1
+      traefik.enable: true
+      traefik.http.routers.dispatcher.rule: "HostRegexp(`${DISPATCHER_HOST}`, `{subdomain:[a-z]+}.${DISPATCHER_HOST}`)"
+      traefik.http.routers.dispatcher.entrypoints: web
+      traefik.http.routers.dispatcher_https.rule: "HostRegexp(`${DISPATCHER_HOST}`, `{subdomain:[a-z]+}.${DISPATCHER_HOST}`)"
+      traefik.http.routers.dispatcher_https.tls: true
+      traefik.http.routers.dispatcher_https.entrypoints: websecure
+      traefik.http.services.dispatcher.loadbalancer.passHostHeader: true
+    volumes:
+      - ./dispatcher/src/:/mnt/dev/src/
+      - ./dispatcher/scripts/fix-symlinks.sh:/docker_entrypoint.d/zzz-fix-symlinks.sh
+    depends_on:
+      - proxy
+    networks:
+      - publish-network
+      - dispatcher-network
+      - internal
+      - default
+  ##########################################################
+  # DISPATCHER END
+  ##########################################################
+
+  ##########################################################
+  # PROXY START
+  ##########################################################
+  proxy:
+    image: ${PROXY_IMAGE}
+    restart: unless-stopped
+    hostname: proxy
+    labels:
+      # note that you want this frontend to match the last. otherwise, it will match login.${HOST_DOMAIN}"
+      traefik.frontend.priority: 1
+      traefik.enable: true
+      traefik.http.routers.proxy.rule: "Host(`${PROXY_HOST}`)"
+      traefik.http.routers.proxy.entrypoints: web
+      traefik.http.routers.proxy_https.rule: "Host(`${PROXY_HOST}`)"
+      traefik.http.routers.proxy_https.tls: true
+      traefik.http.routers.proxy_https.entrypoints: websecure
+      traefik.http.services.proxy.loadbalancer.passHostHeader: true
+      traefik.http.services.proxy.loadbalancer.server.port: 3128
+    volumes:
+      - ./services/proxy/squid.conf:/etc/squid/squid.conf
+    networks:
+      - author-network
+      - publish-network
+      - dispatcher-network
+      - internal
+      - default
+  ##########################################################
+  # PROXY END
+  ##########################################################
+
+
+  ##########################################################
+  # TRAEFIK START
+  ##########################################################
+  traefik:
+    image: ${TRAEFIK_IMAGE}
+    restart: unless-stopped
+    hostname: traefik
+    environment:
+      - TZ
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      traefik.frontend.priority: 1
+      traefik.enable: true
+      traefik.http.routers.traefikdashboard.rule: "Host(`${TRAEFIK_HOST}`) && ( PathPrefix(`/api`) || PathPrefix(`/dashboard`) )"
+      traefik.http.routers.traefikdashboard.entrypoints: web
+      traefik.http.routers.traefikdashboard.service: api@internal
+      traefik.http.routers.traefikdashboard_https.rule: "Host(`${TRAEFIK_HOST}`) && ( PathPrefix(`/api`) || PathPrefix(`/dashboard`) )"
+      traefik.http.routers.traefikdashboard_https.entrypoints: websecure
+      traefik.http.routers.traefikdashboard_https.tls: true
+      traefik.http.routers.traefikdashboard_https.service: api@internal
+      traefik.http.services.traefikdashboard.loadbalancer.server.port: 8080
+
+    ports:
+      - ${TRAEFIK_PORT_HTTP}:80
+      - ${TRAEFIK_PORT_HTTPS}:443
+      - ${TRAEFIK_PORT_DASHBOARD}:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./services/traefik/certs:/letsencrypt
+      - ./services/traefik/config/config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
+
+    depends_on:
+      createcert:
+        condition: service_completed_successfully
+
+    networks:
+      - author-network
+      - publish-network
+      - dispatcher-network
+      - internal
+      - default
+
+  createcert:
+    image: ${CERTS_IMAGE}
+    environment:
+      - TZ
+    command:
+      - "${CERTS_COMMAND}"
+    volumes:
+      - ./services/traefik/certs:/certs
+  ##########################################################
+  # TRAEFIK END
+  ##########################################################
+
+  ##########################################################
+  # DASHBOARD START
+  ##########################################################
+  dashboardbuild:
+    image: ${DASHBOARD_BUILD_IMAGE}
+    privileged: true
+    environment:
+      - TZ
+      - JEKYLL_ENV=production
+      - DOMAIN_URL
+      - GIT_REPO
+      - GIT_REPO_ADOBE
+      - GIT_REPO_ICON
+      - GIT_REPO_TITLE
+      - GIT_REPO_ADOBE_ICON
+      - GIT_REPO_ADOBE_TITLE
+      - TRAEFIK_URL
+      - TRAEFIK_PORT_HTTP
+      - TRAEFIK_PORT_HTTPS
+      - TRAEFIK_PORT_DASHBOARD
+      - PROXY_URL
+      - AUTHOR_URL
+      - AUTHOR_PORT
+      - AUTHOR_DEBUG_PORT
+      - PUBLISH_URL
+      - PUBLISH_PORT
+      - PUBLISH_DEBUG_PORT
+      - DISPATCHER_URL
+      - DASHBOARD_URL
+      - DISPATCHER_HOST
+      - PAGE_LINKS
+      - SHOWCASE_LINKS
+      - AUTHOR_LINKS
+      - CONSOLE_LINKS
+    command: bash /srv/jekyll/build.sh
+    volumes:
+      - ${DASHBOARD_CONTENT_PATH}:/srv/jekyll:rw
+
+  dashboard:
+    image: ${DASHBOARD_IMAGE}
+    restart: unless-stopped
+    working_dir: /content
+    hostname: dashboard
+    depends_on:
+      - traefik
+      - dashboardbuild
+    labels:
+      traefik.frontend.priority: 1
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: "Host(`${DASHBOARD_HOST}`)"
+      traefik.http.routers.dashboard.entrypoints: web
+      traefik.http.routers.dashboard_https.rule: "Host(`${DASHBOARD_HOST}`)"
+      traefik.http.routers.dashboard_https.tls: true
+      traefik.http.routers.dashboard_https.entrypoints: websecure
+      traefik.http.services.dashboard.loadbalancer.server.port: 80
+      traefik.http.services.dashboard.loadbalancer.passHostHeader: true
+    volumes:
+      - ${DASHBOARD_CONTENT_PATH}/_site:/content
+      - ${DASHBOARD_CONFIG_FILE}:/etc/nginx/nginx.conf
+    environment:
+      - TZ
+    networks:
+      - internal
+  ##########################################################
+  # DASHBOARD END
+  ##########################################################
+
+
+networks:
+  default:
+  internal:
+  author-network:
+  publish-network:
+  dispatcher-network:
+
+volumes:
+  author-data:
+  publish-data:
+  dispatcher-data:

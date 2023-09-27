@@ -1,0 +1,34 @@
+#
+# This file contains the filter ACL, and can be customized.
+#
+# By default, it includes the default filter ACL.
+#
+
+$include "./default_filters.any"
+
+# Allow components JSON model
+/0101 { /type "allow" /extension "json" /selectors "model" /path "/content/*" }
+
+# Allow manifest.webmanifest files located in the content
+/0102 { /type "allow" /extension "webmanifest" /path "/content/*/manifest" }
+
+# Allow AEM sitemaps
+/0200 { /type "allow" /path "/content/*" /selectors 'sitemap' /extension "xml" }
+
+# This rule allows content to be access (in addition to default filters)
+/0201 { /type "allow" /extension 'txt' /path "/content/*" }  # disable this rule to allow mapped content only
+
+# Allow featured images
+/0202 { /type "allow" /path "*/_cq_featuredimage/file" }
+
+# Allow data selector
+/0203 { /type "allow" /method "GET" /extension 'json' /selectors 'data' /path "/content/*" }
+
+# Allow google recaptcha selector
+/0206 { /type "allow" /method "GET" /extension 'json' /selectors 'recaptcha' /path "/content/*" }
+
+# Disable scraping of paths
+/blockanyjsonsuffix { /type "deny"  /suffix '/.*.json' }
+
+# Allow MS Office documents to be downloaded
+/allowmsdocs { /type "allow" /extension '(xls|xlsm|doc|docx|csv)' /path "/content/*" }  # disable this rule to allow mapped content only

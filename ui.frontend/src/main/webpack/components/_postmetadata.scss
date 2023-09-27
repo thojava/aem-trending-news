@@ -1,0 +1,37 @@
+.cpm-postmetadata {
+    .cpm-postmetadata__author {
+        display: inline-block;
+
+        .cpm-postmetadata__by {
+            vertical-align: top;
+        }
+
+        .cpm-postmetadata__name {
+            color: black;
+            font-weight: 600;
+            vertical-align: top;
+        }
+
+        .cpm-postmetadata_avatar {
+            width: 26px;
+            height: 26px;
+            margin-right: 6px;
+            border-radius: 50%;
+        }
+    }
+
+    .cpm-postmetadata__date {
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 12px;
+    }
+
+    .cpm-postmetadata__views {
+        float: right;
+
+        .cpm-postmetadata__views__icon {
+            font-size: inherit;
+            margin-right: 5px;
+        }
+    }
+}

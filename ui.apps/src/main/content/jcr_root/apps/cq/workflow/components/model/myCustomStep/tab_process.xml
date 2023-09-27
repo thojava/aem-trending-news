@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:Panel"
+    title="Process">
+    <items jcr:primaryType="cq:WidgetCollection">
+        <process
+            jcr:primaryType="cq:Widget"
+            fieldDescription="Select process implementation."
+            fieldLabel="Process"
+            name="./metaData/PROCESS"
+            options="/libs/cq/workflow/content/console/process.list.json"
+            sortDir="ASC"
+            type="select"
+            xtype="selection"/>
+        <advance
+            jcr:primaryType="cq:Widget"
+            fieldDescription="Check if your handler will advance to the next step."
+            fieldLabel="Handler Advance"
+            name="./metaData/PROCESS_AUTO_ADVANCE"
+            type="checkbox"
+            xtype="selection"/>
+        <arguments
+            jcr:primaryType="cq:Widget"
+            fieldLabel="Arguments"
+            name="./metaData/PROCESS_ARGS"
+            xtype="textarea"/>
+    </items>
+</jcr:root>

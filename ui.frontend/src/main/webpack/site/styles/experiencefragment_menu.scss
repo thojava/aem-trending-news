@@ -1,0 +1,12 @@
+//== XF Header style, used on page template
+
+header.experiencefragment {
+    padding-bottom: 0;
+    padding-top: 10px;
+
+    .cmp-experiencefragment {
+        max-width: $max-content-width;
+        margin: 0 auto;
+        padding: 0 1em;
+    }
+}

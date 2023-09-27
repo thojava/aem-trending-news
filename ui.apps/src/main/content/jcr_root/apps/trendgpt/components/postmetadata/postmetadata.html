@@ -1,0 +1,20 @@
+<div data-sly-use.postMetadata="vn.trendgpt.core.models.PostMetadata"
+    data-sly-test.hasContent="${!postMetadata.empty}" class="cpm-postmetadata">
+    <div class="cpm-postmetadata__author">
+        <a href="https://demo.tagdiv.com/newspaper_magazine_pro/author/admin/" title="${postMetadata.name}">
+            <img src="${postMetadata.avatar}" width="96" height="96" alt="${postMetadata.name}" class="cpm-postmetadata_avatar"
+                loading="lazy">
+        </a>
+        <span class="cpm-postmetadata__by">By</span> <a class="cpm-postmetadata__name"
+            href="https://demo.tagdiv.com/newspaper_magazine_pro/author/admin/">${postMetadata.name}</a>
+    </div>
+    <div class="cpm-postmetadata__date">
+        <time datetime="${'MMM d, yyyy' @ format=postMetadata.publishedDate}">${'MMM d, yyyy' @ format=postMetadata.publishedDate}</time>
+    </div>
+    <div class="cpm-postmetadata__views">
+        <i class="trendgpticon-comment cpm-postmetadata__views__icon"></i>
+        <span>${postMetadata.totalViews}</span>
+    </div>
+</div>
+<sly data-sly-use.template="core/wcm/components/commons/v1/templates.html"
+    data-sly-call="${template.placeholder @ isEmpty=!hasContent}"></sly>

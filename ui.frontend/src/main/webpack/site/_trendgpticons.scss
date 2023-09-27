@@ -1,0 +1,214 @@
+/*
+ *  Copyright 2018 Adobe Systems Incorporated
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+ 
+//** TrendGPT Specific Fonts
+$icomoon-font-family: "trendgpt-icon-font" !default;
+$icomoon-font-path: "../resources/fonts" !default;
+
+$trendgpticon-menu: "\e916";
+$trendgpticon-google: "\e900";
+$trendgpticon-twitter: "\e901";
+$trendgpticon-facebook: "\e902";
+$trendgpticon-instagram: "\e903";
+$trendgpticon-social-share: "\e904";
+$trendgpticon-map: "\e905";
+$trendgpticon-alert: "\e906";
+$trendgpticon-download: "\e907";
+$trendgpticon-info: "\e908";
+$trendgpticon-email: "\e909";
+$trendgpticon-comment: "\e90a";
+$trendgpticon-share: "\e90b";
+$trendgpticon-user: "\e90c";
+$trendgpticon-home: "\e90d";
+$trendgpticon-right-arrow: "\e90e";
+$trendgpticon-left-arrow: "\e90f";
+$trendgpticon-minus: "\e910";
+$trendgpticon-plus: "\e911";
+$trendgpticon-location: "\e912";
+$trendgpticon-search: "\e913";
+$trendgpticon-delete: "\e914";
+$trendgpticon-cart: "\e915";
+$trendgpticon-lock: "\e98f";
+$trendgpticon-unlocked: "\e990";
+$trendgpticon-play3: "\ea1c";
+
+@font-face {
+  font-family: '#{$icomoon-font-family}';
+  src:
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?o7vuvy') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?o7vuvy') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?o7vuvy##{$icomoon-font-family}') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@mixin trendgpticonstyle(){
+   /* use !important to prevent issues with browser extensions that change fonts */
+   font-family: '#{$icomoon-font-family}' !important;
+   speak: none;
+   font-style: normal;
+   font-weight: normal;
+   font-variant: normal;
+   text-transform: none;
+   line-height: 1;
+   font-size: 1.25rem;
+   /* Better Font Rendering =========== */
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+[class$="__icon"], [class*="__icon"], [class$="-icon"], [class*="-icon"]{
+  @include trendgpticonstyle();
+}
+
+.trendgpticon-menu {
+  &:before {
+    content: $trendgpticon-menu; 
+  }
+}
+.trendgpticon-google {
+  &:before {
+    content: $trendgpticon-google; 
+  }
+}
+.trendgpticon-twitter {
+  &:before {
+    content: $trendgpticon-twitter; 
+  }
+}
+.trendgpticon-facebook {
+  &:before {
+    content: $trendgpticon-facebook; 
+  }
+}
+.trendgpticon-instagram {
+  &:before {
+    content: $trendgpticon-instagram; 
+  }
+}
+.trendgpticon-social-share {
+  &:before {
+    content: $trendgpticon-social-share; 
+  }
+}
+.trendgpticon-map {
+  &:before {
+    content: $trendgpticon-map; 
+  }
+}
+.trendgpticon-alert {
+  &:before {
+    content: $trendgpticon-alert; 
+  }
+}
+.trendgpticon-download {
+  &:before {
+    content: $trendgpticon-download; 
+  }
+}
+.trendgpticon-info {
+  &:before {
+    content: $trendgpticon-info; 
+  }
+}
+.trendgpticon-email {
+  &:before {
+    content: $trendgpticon-email; 
+  }
+}
+.trendgpticon-comment {
+  &:before {
+    content: $trendgpticon-comment; 
+  }
+}
+.trendgpticon-share {
+  &:before {
+    content: $trendgpticon-share; 
+  }
+}
+.trendgpticon-user {
+  &:before {
+    content: $trendgpticon-user; 
+  }
+}
+.trendgpticon-home {
+  &:before {
+    content: $trendgpticon-home; 
+  }
+}
+.trendgpticon-right-arrow {
+  &:before {
+    content: $trendgpticon-right-arrow; 
+  }
+}
+.trendgpticon-left-arrow {
+  &:before {
+    content: $trendgpticon-left-arrow; 
+  }
+}
+.trendgpticon-minus {
+  &:before {
+    content: $trendgpticon-minus; 
+  }
+}
+.trendgpticon-plus {
+  &:before {
+    content: $trendgpticon-plus; 
+  }
+}
+.trendgpticon-location {
+  &:before {
+    content: $trendgpticon-location; 
+  }
+}
+.trendgpticon-search {
+  &:before {
+    content: $trendgpticon-search; 
+  }
+}
+.trendgpticon-delete {
+  &:before {
+    content: $trendgpticon-delete; 
+  }
+}
+.trendgpticon-cart {
+  &:before {
+    content: $trendgpticon-cart; 
+  }
+}
+
+.trendgpticon-menu {
+  &:before {
+    content: $trendgpticon-menu; 
+  }
+}
+.trendgpticon-lock {
+  &:before {
+    content: $trendgpticon-lock; 
+  }
+}
+.trendgpticon-unlocked {
+  &:before {
+    content: $trendgpticon-unlocked; 
+  }
+}
+.trendgpticon-play3 {
+  &:before {
+    content: $trendgpticon-play3; 
+  }
+}
+
